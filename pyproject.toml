@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "chat"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.11.0"
+pydantic = "^2.8.2"
+pydantic-settings = "^2.4.0"
+aiortc = "^1.9.0"
+psycopg = "^3.2.1"
+fastapi = "^0.112.0"
+langchain = "^0.2.14"
+langchain-openai = "^0.1.21"
+langfuse = "^2.43.3"
+langchain-postgres = "^0.0.9"
+schedule = "^1.2.2"
+punq = "^0.7.0"
+uvicorn = "^0.30.6"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.7"
+pytest = "^8.3.2"
+isort = "^5.13.2"
+freezegun = "^1.5.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
