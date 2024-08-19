@@ -1,50 +1,49 @@
 from contextlib import asynccontextmanager
-
+from typing import Callable
 from langchain_postgres import PostgresChatMessageHistory
 from psycopg import AsyncConnection
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine,async_sessionmaker
 from sqlalchemy.orm import sessionmaker
 
 from chat.db.models.base import Base
 from chat.db.settings import DbSettings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class DbManager:
-    def __init__(self, settings: DbSettings):
-        self.settings = settings
-
-    @asynccontextmanager
-    async def connection(self):
-        async with AsyncConnection() as conn:
-            yield conn
-
-
-class ChatHistoryManager(DbManager):
     CHAT_TABLE_NAME = "CHAT"
 
+    def __init__(self, settings: DbSettings):
+
+        self.a_sqlalchemy_engine = create_async_engine(
+            settings.conn_string, echo=True
+        )
+        self.a_sessionmaker = async_sessionmaker(
+            self.a_sqlalchemy_engine, expire_on_commit=False
+        )
+    
     @asynccontextmanager
     async def create_message_history(
         self,
         session_id: str,
     ):
-        async with self.connection() as a_conn:
+        async with self.a_sqlalchemy_engine.begin() as a_conn:
             yield PostgresChatMessageHistory(
                 self.CHAT_TABLE_NAME, session_id, async_connection=a_conn
             )
 
-
-class SqlAlchemyManager(DbManager):
-    def __init__(self, settings: DbSettings):
-        super().__init__(settings)
-        self.a_sqlalchemy_engine = create_async_engine(
-            self.settings.conn_string, echo=True
-        )
-        self.a_sessionmaker = sessionmaker(
-            self.a_sqlalchemy_engine, class_=AsyncSession, expire_on_commit=False
-        )
-
-    def a_session(self):
-        return self.a_sessionmaker()
+    @asynccontextmanager
+    async def a_session(self):
+        session = self.a_sessionmaker()
+        try:
+            yield session
+        except Exception:
+            logger.exception("Session rollback because of exception")
+            session.rollback()
+        finally:
+            session.close()
 
     async def init_models(self):
         async with self.a_sqlalchemy_engine.begin() as conn:

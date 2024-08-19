@@ -8,21 +8,39 @@ from chat.routers.llm import Control
 from chat.settings import AppSettings
 
 
-@asynccontextmanager
-def lifespan(app: FastAPI):
-    prepare_container()
-    yield
+class WebApp:
+    def __init__(self, app_seetings: AppSettings ):
+        self.app_settings = self.app_settings
+
+    @asynccontextmanager
+    def lifespan(app: FastAPI):
+        prepare_container()
+        yield
 
 
-def create_app(routers: list[APIRouter]):
-    app = FastAPI()
+    def create_app(routers: list[APIRouter]):
+        app = FastAPI()
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins="*",
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins="*",
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
-    app.include_router(Control.create_router())
+        app.include_router(Control.create_router())
+
+
+class WebApp:
+    def __init__(self, app_seetings: AppSettings ):
+        self.app_settings = self.app_settings
+
+    @asynccontextmanager
+    def lifespan(app: FastAPI):
+        prepare_container()
+        yield
+
+
+    def start_app(routers: list[APIRouter]):
+        pass
