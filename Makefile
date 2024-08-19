@@ -9,13 +9,17 @@ install:
 install-cloudfare-tunnel:
 	@wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
 	@sudo dpkg -i cloudflared-linux-amd64.deb
+
+
+install-docker:
+	source docker-install.sh
 	
-	
-.PHONY: format
 format:
-	@ruff format $(PROJECT_DIR)
+	ruff format $(PROJECT_DIR)
 	@isort $(PROJECT_DIR)
 
-.PHONY: local-start
 local-start:
-	@cloudflared tunnel --url http://127.0.0.1:$(PORT)
+	cloudflared tunnel --url http://127.0.0.1:$(PORT)
+
+run:
+	@sudo docker compose up

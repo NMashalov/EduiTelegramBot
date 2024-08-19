@@ -12,12 +12,11 @@ from chat.scheduler.notify import NotifyBotScheduler
 
 
 class LangfuseContainer(containers.DeclarativeContainer):
-
     config = providers.Configuration()
 
     langfuse_client = providers.Singleton(
         LangFuseClient,
-        api_key=config.api_key, 
+        api_key=config.api_key,
         timeout=config.timeout,
     )
 
@@ -37,22 +36,19 @@ class DbConatiner(containers.DeclarativeContainer):
         session_factory=db.provided.session,
     )
 
+
 class LLMContainer(containers.DeclarativeContainer):
+    config = providers.Configuration()
 
-    config = providers.Configuration()  
+    llm_client = providers.Singleton()
 
-    llm_client = providers.Singleton(
-    )
+    db = providers.Singleton()
 
-    db =  providers.Singleton(
-    )
 
 class AppContainer(containers.DeclarativeContainer):
     def register_bot(self):
         self.register(AppBot, scope=Scope.singleton)
         return self
-
-
 
     def register_langfuse(self):
         self.register(LangFuseSettings, scope=Scope.singleton)

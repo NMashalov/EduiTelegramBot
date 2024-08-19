@@ -1,19 +1,19 @@
 services:
-  app:
-    build: .
-    env_file:
-      - .env
+  # app:
+  #   build: .
+  #   env_file:
+  #     - .env
 
-  langfuse-server:
-    image: langfuse/langfuse:2
-    depends_on:
-      db:
-        condition: service_healthy
-    ports:
-      - "3000:3000"
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
-      - NEXTAUTH_URL=http://localhost:3000
+  # langfuse-server:
+  #   image: langfuse/langfuse:2
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+  #     - NEXTAUTH_URL=http://localhost:3000
 
   db:
     image: postgres
@@ -32,6 +32,20 @@ services:
     volumes:
       - database_data:/var/lib/postgresql/data
 
+    pgadmin:
+      container_name: pgadmin_container
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin
+        PGADMIN_DEFAULT_PASSWORD: admin
+        PGADMIN_CONFIG_SERVER_MODE: 'False'
+      volumes:
+        - pgadmin:/var/lib/pgadmin
+
+      ports:
+        - 5050:80
+      restart: unless-stopped
+
 volumes:
   database_data:
-    driver: local
+  pgadmin:

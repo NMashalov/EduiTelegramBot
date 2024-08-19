@@ -1,6 +1,6 @@
-from aiogram import Bot, Dispatcher, F
+from fastapi import APIRouter
 
-from chat.bot.bot import Bot
+from chat.bot.bot import AppBot
 
 
 class AiogramRouterFactory:
@@ -8,14 +8,18 @@ class AiogramRouterFactory:
 
     TAGS = ["aiogram", "webhook"]
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: AppBot):
         self.bot = bot
 
-    async def create_router(self):
-        dp.include_routers(questions.router, different_types.router)
+    def register_tg(self):
+        self.bot.dp.include_routers()
 
-        await self.bot.set_webhook(
-            url=self.AIOGRAM_PREFIX,
-            allowed_updates=self.dp.resolve_used_update_types(),
-            drop_pending_updates=True,
+        self.bot.set_webhook(
+            prefix=self.AIOGRAM_PREFIX,
         )
+
+    def create_router(self):
+        self.register_tg()
+        router = APIRouter(tags=self.TAGS)
+
+        router.add_api_route(self.AIOGRAM_PREFIX, self.bot.feed_update)

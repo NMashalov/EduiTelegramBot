@@ -1,25 +1,26 @@
 from contextlib import asynccontextmanager
 
+import uvicorn
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from chat.container import prepare_container
-from chat.routers.llm import Control
+from chat.db.db import DbManager
+from chat.routers.webhook import AiogramRouterFactory
 from chat.settings import AppSettings
 
 
 class WebApp:
-    def __init__(self, app_seetings: AppSettings ):
-        self.app_settings = self.app_settings
+    def __init__(self, db_manager: DbManager):
+        self.db_manager = db_manager
 
     @asynccontextmanager
-    def lifespan(app: FastAPI):
-        prepare_container()
+    def lifespan(self, app: FastAPI):
+        self.db_manager
         yield
 
-
-    def create_app(routers: list[APIRouter]):
-        app = FastAPI()
+    def create_app(self):
+        app = FastAPI(lifespan=self.lifespan)
 
         app.add_middleware(
             CORSMiddleware,
@@ -29,18 +30,18 @@ class WebApp:
             allow_headers=["*"],
         )
 
-        app.include_router(Control.create_router())
+        app.include_router(AiogramRouterFactory().create_router())
+        return app
 
 
-class WebApp:
-    def __init__(self, app_seetings: AppSettings ):
-        self.app_settings = self.app_settings
+class UvicornApp:
+    def __init__(self, app: WebApp, app_settings: AppSettings):
+        self.app = app
+        self.app_settings = app_settings
 
-    @asynccontextmanager
-    def lifespan(app: FastAPI):
-        prepare_container()
-        yield
-
-
-    def start_app(routers: list[APIRouter]):
-        pass
+    def start(self):
+        uvicorn.run(
+            self.app.create_app(),
+            port=self.app_settings.port,
+            host=self.app_settings.host,
+        )

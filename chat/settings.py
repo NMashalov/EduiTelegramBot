@@ -4,7 +4,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AppSettings(BaseSettings):
-    port: 5000
+    port: int = 5000
+    host: str = "0.0.0.0"
 
     model_config = SettingsConfigDict(
         env_file=".env", env_prefix="APP_", extra="ignore"

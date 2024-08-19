@@ -1,21 +1,16 @@
 from aiogram import Bot, Dispatcher, F
+from fastapi import APIRouter
 
-from chat.bot.bot import Bot
 
-
-class AiogramRouterFactory:
+class LlmRouterFactory:
     AIOGRAM_PREFIX: str = "/llm"
 
-    TAGS = ["aiogram", "webhook"]
+    TAGS = ["llm"]
 
     def __init__(self, bot: Bot):
         self.bot = bot
 
-    async def create_router(self):
-        dp.include_routers(questions.router, different_types.router)
+    def create_router(self):
+        router = APIRouter(tags=self.TAGS)
 
-        await self.bot.set_webhook(
-            url=self.AIOGRAM_PREFIX,
-            allowed_updates=self.dp.resolve_used_update_types(),
-            drop_pending_updates=True,
-        )
+        router.add_api_route(AIOGRAM_PREFIXs)

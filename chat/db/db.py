@@ -1,13 +1,12 @@
+import logging
 from contextlib import asynccontextmanager
 from typing import Callable
+
 from langchain_postgres import PostgresChatMessageHistory
-from psycopg import AsyncConnection
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine,async_sessionmaker
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from chat.db.models.base import Base
 from chat.db.settings import DbSettings
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -16,14 +15,11 @@ class DbManager:
     CHAT_TABLE_NAME = "CHAT"
 
     def __init__(self, settings: DbSettings):
-
-        self.a_sqlalchemy_engine = create_async_engine(
-            settings.conn_string, echo=True
-        )
+        self.a_sqlalchemy_engine = create_async_engine(settings.conn_string, echo=True)
         self.a_sessionmaker = async_sessionmaker(
             self.a_sqlalchemy_engine, expire_on_commit=False
         )
-    
+
     @asynccontextmanager
     async def create_message_history(
         self,
