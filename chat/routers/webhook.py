@@ -1,9 +1,9 @@
 from fastapi import APIRouter
-
+from chat.routers.base import BaseRouterFactory
 from chat.bot.bot import AppBot
 
 
-class AiogramRouterFactory:
+class AiogramRouterFactory(BaseRouterFactory):
     AIOGRAM_PREFIX: str = "/webhook"
 
     TAGS = ["aiogram", "webhook"]
@@ -23,3 +23,4 @@ class AiogramRouterFactory:
         router = APIRouter(tags=self.TAGS)
 
         router.add_api_route(self.AIOGRAM_PREFIX, self.bot.feed_update)
+        return router

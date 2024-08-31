@@ -1,17 +1,17 @@
 from contextlib import asynccontextmanager
 
 import uvicorn
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from chat.container import prepare_container
 from chat.db.db import DbManager
 from chat.routers.webhook import AiogramRouterFactory
 from chat.settings import AppSettings
 
 
 class WebApp:
-    def __init__(self, db_manager: DbManager):
+    def __init__(self, db_manager: DbManager,
+                 router_factory:):
         self.db_manager = db_manager
 
     @asynccontextmanager

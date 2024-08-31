@@ -10,7 +10,6 @@ install-cloudfare-tunnel:
 	@wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
 	@sudo dpkg -i cloudflared-linux-amd64.deb
 
-
 install-docker:
 	source docker-install.sh
 	

@@ -1,7 +1,4 @@
-import asyncio
 import logging
-
-import uvicorn
 
 from chat.web import UvicornApp
 
@@ -10,4 +7,7 @@ logging.basicConfig(
     format="%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s",
 )
 
-UvicornApp().start()
+UvicornApp(
+    app=
+
+).start()
